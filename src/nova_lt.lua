@@ -525,19 +525,9 @@ function novalib:MakeWindow(Configs)
 		BackgroundTransparency = 1,
 		Name = "Top Bar"
 	})
-
-	local Icon = InsertTheme(Create("ImageLabel", TopBar, {
-		Position = UDim2.new(0, 12, 0.5),
-		Size = UDim2.new(0, 16, 0, 16),
-		AnchorPoint = Vector2.new(0, 0.5),
-		Image = "rbxassetid://120545479757972",
-		BackgroundTransparency = 1,
-		ImageTransparency = (FirstTab and 0.5) or 0,
-		ImageColor3 = Theme["Color Text"]
-	}), "Text")
 	
 	local Title = InsertTheme(Create("TextLabel", TopBar, {
-		Position = UDim2.new(0, 35, 0.5),
+		Position = UDim2.new(0, 15, 0.5),
 		AnchorPoint = Vector2.new(0, 0.5),
 		AutomaticSize = "XY",
 		Text = WTitle,
