@@ -116,3 +116,14 @@ Tab3:AddDiscordInvite({
     Logo = "rbxassetid://18751483361",
     Invite = "Link discord invite",
 })
+
+--[[ Soon
+Tab3:Dropdown({
+    Name = "Theme",
+    Options = {"Default", "Custom", "Amethyst", "Bloom", "Dark", "DarkBlue", "Light", "Serenity"},
+    CurrentOption = {"Default"},
+    Flag = "ThemeDropdown",
+    Callback = function(option)
+        Window.ModifyTheme(option[1])
+    end
+})]]
