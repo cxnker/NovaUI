@@ -73,7 +73,7 @@ Tab1:AddTextBox({
 })
 
 Tab1:AddButton({"Custom Theme", function()
-novalib:Notify({
+Library:Notify({
     Title = "Éxito",
     Content = "Operación completada",
     Icon = "rbxassetid://10723415903",
