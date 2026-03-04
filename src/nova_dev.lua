@@ -2032,7 +2032,7 @@ novalib:SetNotificationLower(false) -- Posición normal]]
 
 --[[
     Sistema de Notificaciones Optimizado para Nova Lib
-    Con animaciones de entrada y salida
+    Diseño WindUI 1.6.1 con animaciones de deslizamiento
 ]]
 
 function novalib:Notify(Configs)
@@ -2064,7 +2064,7 @@ function novalib:Notify(Configs)
         Size = UDim2.new(1, 0, 0, 0),
         BackgroundTransparency = 1,
         AutomaticSize = "Y",
-        Position = UDim2.new(2, 0, 1, 0), -- Fuera de la pantalla (derecha)
+        Position = UDim2.new(2, 0, 1, 0), -- Comienza fuera de la pantalla (derecha)
         AnchorPoint = Vector2.new(0, 1)
     })
     
@@ -2154,21 +2154,23 @@ function novalib:Notify(Configs)
         Make("Corner", ProgressBar, UDim.new(1, 0))
     end
     
-    -- Función de cierre
+    -- Función de cierre con animación de deslizamiento a la derecha
     local Closed = false
     local function Close()
         if Closed then return end
         Closed = true
         
-        -- Animación de salida (deslizar hacia la derecha)
-        CreateTween({Notification, "Position", UDim2.new(2, 0, 1, 0), 0.25})
-        task.wait(0.25)
+        -- Animación de salida: deslizar hacia la derecha
+        CreateTween({Notification, "Position", UDim2.new(2, 0, 1, 0), 0.3})
+        task.wait(0.3)
         Notification:Destroy()
     end
     
     CloseBtn.MouseButton1Click:Connect(Close)
     
-    -- Animación de entrada (deslizar desde la derecha)
+    -- ANIMACIÓN DE ENTRADA: deslizar desde la derecha hacia la izquierda
+    -- La notificación comienza en Position UDim2.new(2, 0, 1, 0) (fuera de pantalla)
+    -- La animación la mueve a UDim2.new(0, 0, 1, 0) (visible)
     CreateTween({Notification, "Position", UDim2.new(0, 0, 1, 0), 0.3})
     
     -- Auto-cierre
