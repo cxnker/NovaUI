@@ -80,3 +80,17 @@ Library:Notify({
     Duration = 3
 })
 end})
+
+Library:Notify({
+    Title = "Éxito",
+    Content = "Operación completada",
+    Icon = "rbxassetid://10723415903",
+    Duration = 3
+})
+
+Windows:Notify({
+    Title = "Éxito",
+    Content = "Operación completada",
+    Icon = "rbxassetid://10723415903",
+    Duration = 3
+})
