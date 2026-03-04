@@ -1967,6 +1967,163 @@ function novalib:MakeWindow(Configs)
 			function DiscordInvite:Visible(...) Funcs:ToggleVisible(InviteHolder, ...) end
 			return DiscordInvite
 		end
+
+-- NEW
+function novalib:Notify(Configs)
+    Configs = Configs or {}
+    local Title = Configs.Title or "Notification"
+    local Content = Configs.Content or ""
+    local Icon = Configs.Icon and self:GetIcon(Configs.Icon) or "rbxassetid://10747384394"
+    local Duration = Configs.Duration or 5
+    
+    if not self.NotificationHolder then
+        self.NotificationHolder = Create("Frame", ScreenGui, {
+            Name = "NotificationHolder",
+            Size = UDim2.new(0, 300, 1, -156),
+            Position = UDim2.new(1, -29, 0, 56),
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundTransparency = 1
+        }, {
+            Create("UIListLayout", {
+                VerticalAlignment = "Bottom",
+                Padding = UDim.new(0, 8)
+            }),
+            Create("UIPadding", {PaddingBottom = UDim.new(0, 29)})
+        })
+    end
+    
+    local Notification = Create("Frame", self.NotificationHolder, {
+        Size = UDim2.new(1, 0, 0, 0),
+        BackgroundTransparency = 1,
+        AutomaticSize = "Y",
+        Position = UDim2.new(2, 0, 1, 0),
+        AnchorPoint = Vector2.new(0, 1)
+    })
+    
+    local ContentFrame = InsertTheme(Create("Frame", Notification, {
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = "Y",
+        BackgroundColor3 = Theme["Color Hub 2"],
+        BackgroundTransparency = 0.25
+    }), "Frame")
+    Make("Corner", ContentFrame, UDim.new(0, 16))
+    Make("Stroke", ContentFrame)
+    
+    local IconLabel = InsertTheme(Create("ImageLabel", ContentFrame, {
+        Size = UDim2.new(0, 24, 0, 24),
+        Position = UDim2.new(0, 12, 0, 12),
+        Image = Icon,
+        BackgroundTransparency = 1,
+        ImageColor3 = Theme["Color Theme"]
+    }), "Theme")
+    
+    local CloseBtn = InsertTheme(Create("ImageButton", ContentFrame, {
+        Size = UDim2.new(0, 16, 0, 16),
+        Position = UDim2.new(1, -12, 0, 12),
+        AnchorPoint = Vector2.new(1, 0),
+        Image = "rbxassetid://10747384394",
+        BackgroundTransparency = 1,
+        ImageColor3 = Theme["Color Text"]
+    }), "Text")
+    
+    CloseBtn.MouseEnter:Connect(function()
+        CreateTween({CloseBtn, "ImageColor3", Color3.fromRGB(255, 80, 80), 0.15})
+    end)
+    CloseBtn.MouseLeave:Connect(function()
+        CreateTween({CloseBtn, "ImageColor3", Theme["Color Text"], 0.15})
+    end)
+    
+    -- Contenedor de texto
+    local TextContainer = Create("Frame", ContentFrame, {
+        Size = UDim2.new(1, -52, 0, 0),
+        Position = UDim2.new(0, 44, 0, 8),
+        BackgroundTransparency = 1,
+        AutomaticSize = "Y"
+    }, {
+        Create("UIListLayout", {Padding = UDim.new(0, 2)}),
+        Create("UIPadding", {PaddingBottom = UDim.new(0, 8)})
+    })
+    
+    local TitleLabel = InsertTheme(Create("TextLabel", TextContainer, {
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = "Y",
+        Text = Title,
+        Font = Enum.Font.GothamBold,
+        TextSize = 14,
+        TextColor3 = Theme["Color Text"],
+        TextXAlignment = "Left",
+        BackgroundTransparency = 1
+    }), "Text")
+    
+    if Content and Content ~= "" then
+        InsertTheme(Create("TextLabel", TextContainer, {
+            Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = "Y",
+            Text = Content,
+            Font = Enum.Font.Gotham,
+            TextSize = 12,
+            TextColor3 = Theme["Color Dark Text"],
+            TextXAlignment = "Left",
+            BackgroundTransparency = 1
+        }), "DarkText")
+    end
+    
+    local ProgressBar
+    if Duration > 0 then
+        ProgressBar = InsertTheme(Create("Frame", ContentFrame, {
+            Size = UDim2.new(1, 0, 0, 2),
+            Position = UDim2.new(0, 0, 1, -2),
+            BackgroundColor3 = Theme["Color Theme"],
+            BackgroundTransparency = 0.5
+        }), "Theme")
+        Make("Corner", ProgressBar, UDim.new(1, 0))
+    end
+    
+    local Closed = false
+    local function Close()
+        if Closed then return end
+        Closed = true
+        
+        CreateTween({Notification, "Position", UDim2.new(2, 0, 1, 0), 0.25})
+        CreateTween({Notification, "BackgroundTransparency", 1, 0.25})
+        task.wait(0.25)
+        Notification:Destroy()
+    end
+    
+    CloseBtn.MouseButton1Click:Connect(Close)
+    
+    CreateTween({Notification, "Position", UDim2.new(0, 0, 1, 0), 0.3})
+    
+    if Duration > 0 then
+        CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 2), Duration})
+        task.spawn(function()
+            task.wait(Duration)
+            Close()
+        end)
+    end
+    
+    return {
+        Close = Close,
+        SetTitle = function(_, t) if t then TitleLabel.Text = tostring(t) end end,
+        SetDesc = function(_, d) 
+            if d then
+                local descLabel = TextContainer:FindFirstChildOfClass("TextLabel")
+                if descLabel and descLabel ~= TitleLabel then
+                    descLabel.Text = tostring(d)
+                end
+            end
+        end
+    }
+end
+
+function novalib:SetNotificationLower(Lower)
+    if self.NotificationHolder then
+        self.NotificationHolder.Size = Lower and 
+            UDim2.new(0, 300, 1, -56) or 
+            UDim2.new(0, 300, 1, -156)
+    end
+end
+			
 --[[
 function novalib:Notify(Configs)
     -- Configuración
