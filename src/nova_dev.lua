@@ -1739,258 +1739,171 @@ function novalib:MakeWindow(Configs)
 		end
 
 --[[
-    Sistema de Notificaciones para Nova Lib
-    Adaptado fielmente de WindUI 1.6.1
-    Mantiene la misma estructura y animaciones
+    Sistema de Notificaciones Optimizado para Nova Lib
+    Diseño WindUI 1.6.1 pero más compacto
 ]]
 
 function novalib:Notify(Configs)
-    -- Configuración
     Configs = Configs or {}
     local Title = Configs.Title or "Notification"
-    local Content = Configs.Content or Configs.Desc or Configs.Description or ""
-    local Icon = Configs.Icon or "info"
+    local Content = Configs.Content or ""
+    local Icon = Configs.Icon and self:GetIcon(Configs.Icon) or "rbxassetid://10747384394"
     local Duration = Configs.Duration or 5
-    local Background = Configs.Background
     
-    -- Obtener el ícono
-    local IconAsset = self:GetIcon(Icon)
-    if not IconAsset:find("rbxassetid://") then
-        IconAsset = "rbxassetid://10747384394" -- Icono por defecto
-    end
-    
-    -- Crear contenedor de notificaciones si no existe (como en WindUI)
+    -- Crear contenedor si no existe
     if not self.NotificationHolder then
         self.NotificationHolder = Create("Frame", ScreenGui, {
             Name = "NotificationHolder",
             Size = UDim2.new(0, 300, 1, -156),
             Position = UDim2.new(1, -29, 0, 56),
             AnchorPoint = Vector2.new(1, 0),
-            BackgroundTransparency = 1,
-            ClipsDescendants = true
+            BackgroundTransparency = 1
         }, {
             Create("UIListLayout", {
-                HorizontalAlignment = "Center",
-                SortOrder = "LayoutOrder",
                 VerticalAlignment = "Bottom",
                 Padding = UDim.new(0, 8)
             }),
-            Create("UIPadding", {
-                PaddingBottom = UDim.new(0, 29)
-            })
+            Create("UIPadding", {PaddingBottom = UDim.new(0, 29)})
         })
     end
     
-    -- Frame exterior (para animación)
-    local OuterFrame = Create("Frame", self.NotificationHolder, {
-        Name = "NotificationOuter",
+    -- Frame principal de la notificación
+    local Notification = Create("Frame", self.NotificationHolder, {
         Size = UDim2.new(1, 0, 0, 0),
-        BackgroundTransparency = 1
-    })
-    
-    -- CanvasGroup principal (para fade)
-    local CanvasGroup = Create("CanvasGroup", OuterFrame, {
-        Name = "Notification",
-        Size = UDim2.new(1, 0, 0, 0),
-        Position = UDim2.new(2, 0, 1, 0),
-        AnchorPoint = Vector2.new(0, 1),
+        BackgroundTransparency = 1,
         AutomaticSize = "Y",
-        BackgroundTransparency = 0.25,
-        GroupTransparency = 1
+        Position = UDim2.new(2, 0, 1, 0),
+        AnchorPoint = Vector2.new(0, 1)
     })
     
-    -- Fondo principal con color del tema
-    local MainFrame = InsertTheme(Create("Frame", CanvasGroup, {
+    -- Contenido de la notificación
+    local ContentFrame = InsertTheme(Create("Frame", Notification, {
         Size = UDim2.new(1, 0, 0, 0),
         AutomaticSize = "Y",
         BackgroundColor3 = Theme["Color Hub 2"],
         BackgroundTransparency = 0.25
     }), "Frame")
-    Make("Corner", MainFrame, UDim.new(0, 16))
+    Make("Corner", ContentFrame, UDim.new(0, 16))
+    Make("Stroke", ContentFrame)
     
-    -- Imagen de fondo si se especifica (como en WindUI)
-    if Background then
-        local BackgroundImage = Create("ImageLabel", MainFrame, {
-            Name = "Background",
-            Size = UDim2.new(1, 0, 1, 0),
-            Image = Background,
-            ScaleType = "Crop",
-            BackgroundTransparency = 1
-        })
-        Make("Corner", BackgroundImage, UDim.new(0, 16))
-    end
-    
-    -- Stroke (borde)
-    Make("Stroke", MainFrame)
-    
-    -- Ícono (posicionado igual que en WindUI)
-    local IconLabel = InsertTheme(Create("ImageLabel", MainFrame, {
-        Size = UDim2.new(0, 26, 0, 26),
-        Position = UDim2.new(0, 14, 0, 14),
-        Image = IconAsset,
+    -- Ícono
+    local IconLabel = InsertTheme(Create("ImageLabel", ContentFrame, {
+        Size = UDim2.new(0, 24, 0, 24),
+        Position = UDim2.new(0, 12, 0, 12),
+        Image = Icon,
         BackgroundTransparency = 1,
         ImageColor3 = Theme["Color Theme"]
     }), "Theme")
     
-    -- Botón de cerrar (X) - posicionado igual que en WindUI
-    local CloseButton = InsertTheme(Create("ImageButton", MainFrame, {
+    -- Botón cerrar
+    local CloseBtn = InsertTheme(Create("ImageButton", ContentFrame, {
         Size = UDim2.new(0, 16, 0, 16),
-        Position = UDim2.new(1, -14, 0, 14),
+        Position = UDim2.new(1, -12, 0, 12),
         AnchorPoint = Vector2.new(1, 0),
         Image = "rbxassetid://10747384394",
         BackgroundTransparency = 1,
-        ImageColor3 = Theme["Color Text"],
-        AutoButtonColor = false
+        ImageColor3 = Theme["Color Text"]
     }), "Text")
     
-    -- Efectos hover para el botón X
-    CloseButton.MouseEnter:Connect(function()
-        CreateTween({CloseButton, "ImageColor3", Color3.fromRGB(255, 80, 80), 0.2})
+    -- Efecto hover del botón cerrar
+    CloseBtn.MouseEnter:Connect(function()
+        CreateTween({CloseBtn, "ImageColor3", Color3.fromRGB(255, 80, 80), 0.15})
     end)
-    CloseButton.MouseLeave:Connect(function()
-        CreateTween({CloseButton, "ImageColor3", Theme["Color Text"], 0.2})
+    CloseBtn.MouseLeave:Connect(function()
+        CreateTween({CloseBtn, "ImageColor3", Theme["Color Text"], 0.15})
     end)
     
-    -- Contenedor de texto (posicionado igual que en WindUI)
-    local TextContainer = Create("Frame", MainFrame, {
-        Size = UDim2.new(1, Icon and -28-14 or 0, 0, 0),
-        Position = UDim2.new(1, 0, 0, 0),
-        AnchorPoint = Vector2.new(1, 0),
+    -- Contenedor de texto
+    local TextContainer = Create("Frame", ContentFrame, {
+        Size = UDim2.new(1, -52, 0, 0),
+        Position = UDim2.new(0, 44, 0, 8),
         BackgroundTransparency = 1,
         AutomaticSize = "Y"
     }, {
-        Create("UIPadding", {
-            PaddingTop = UDim.new(0, 14),
-            PaddingLeft = UDim.new(0, 14),
-            PaddingRight = UDim.new(0, 14),
-            PaddingBottom = UDim.new(0, 14)
-        }),
-        Create("UIListLayout", {
-            Padding = UDim.new(0, 4)
-        })
+        Create("UIListLayout", {Padding = UDim.new(0, 2)}),
+        Create("UIPadding", {PaddingBottom = UDim.new(0, 8)})
     })
     
     -- Título
     local TitleLabel = InsertTheme(Create("TextLabel", TextContainer, {
+        Size = UDim2.new(1, 0, 0, 0),
         AutomaticSize = "Y",
-        Size = UDim2.new(1, -30-14, 0, 0),
-        TextWrapped = true,
-        TextXAlignment = "Left",
-        RichText = true,
-        BackgroundTransparency = 1,
-        TextSize = 16,
         Text = Title,
         Font = Enum.Font.GothamBold,
-        TextColor3 = Theme["Color Text"]
+        TextSize = 14,
+        TextColor3 = Theme["Color Text"],
+        TextXAlignment = "Left",
+        BackgroundTransparency = 1
     }), "Text")
     
-    -- Descripción
+    -- Descripción (solo si existe)
     if Content and Content ~= "" then
         InsertTheme(Create("TextLabel", TextContainer, {
-            AutomaticSize = "Y",
             Size = UDim2.new(1, 0, 0, 0),
-            TextWrapped = true,
-            TextXAlignment = "Left",
-            RichText = true,
-            BackgroundTransparency = 1,
-            TextTransparency = 0.4,
-            TextSize = 15,
+            AutomaticSize = "Y",
             Text = Content,
             Font = Enum.Font.Gotham,
-            TextColor3 = Theme["Color Dark Text"]
+            TextSize = 12,
+            TextColor3 = Theme["Color Dark Text"],
+            TextXAlignment = "Left",
+            BackgroundTransparency = 1
         }), "DarkText")
     end
     
-    -- Barra de progreso (para duración)
+    -- Barra de progreso
     local ProgressBar
     if Duration > 0 then
-        ProgressBar = InsertTheme(Create("Frame", MainFrame, {
-            Size = UDim2.new(1, 0, 0, 3),
-            Position = UDim2.new(0, 0, 1, -3),
-            AnchorPoint = Vector2.new(0, 1),
-            BackgroundTransparency = 0.9,
-            BackgroundColor3 = Theme["Color Text"]
-        }), "Text")
+        ProgressBar = InsertTheme(Create("Frame", ContentFrame, {
+            Size = UDim2.new(1, 0, 0, 2),
+            Position = UDim2.new(0, 0, 1, -2),
+            BackgroundColor3 = Theme["Color Theme"],
+            BackgroundTransparency = 0.5
+        }), "Theme")
+        Make("Corner", ProgressBar, UDim.new(1, 0))
     end
     
-    -- Función de cierre (igual que en WindUI)
+    -- Función de cierre
     local Closed = false
     local function Close()
         if Closed then return end
         Closed = true
         
-        -- Animación de salida (igual que WindUI)
-        CreateTween({OuterFrame, "Size", UDim2.new(1, 0, 0, -8), 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-        CreateTween({CanvasGroup, "Position", UDim2.new(2, 0, 1, 0), 0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-        
-        task.wait(0.45)
-        OuterFrame:Destroy()
+        CreateTween({Notification, "Position", UDim2.new(2, 0, 1, 0), 0.25})
+        CreateTween({Notification, "BackgroundTransparency", 1, 0.25})
+        task.wait(0.25)
+        Notification:Destroy()
     end
     
-    -- Conectar botón de cerrar
-    CloseButton.MouseButton1Click:Connect(Close)
+    CloseBtn.MouseButton1Click:Connect(Close)
     
-    -- Animación de entrada (igual que en WindUI)
-    task.spawn(function()
-        task.wait()
-        CreateTween({OuterFrame, "Size", UDim2.new(1, 0, 0, CanvasGroup.AbsoluteSize.Y), 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-        CreateTween({CanvasGroup, "Position", UDim2.new(0, 0, 1, 0), 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-        CreateTween({CanvasGroup, "GroupTransparency", 0, 0.45})
-        
-        if Duration > 0 then
-            CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 3), Duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut})
+    -- Animación de entrada
+    CreateTween({Notification, "Position", UDim2.new(0, 0, 1, 0), 0.3})
+    
+    -- Auto-cierre
+    if Duration > 0 then
+        CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 2), Duration})
+        task.spawn(function()
             task.wait(Duration)
             Close()
-        end
-    end)
+        end)
+    end
     
     -- Métodos públicos
-    local Notif = {}
-    function Notif:Close()
-        Close()
-    end
-    
-    function Notif:SetTitle(NewTitle)
-        if NewTitle then
-            TitleLabel.Text = tostring(NewTitle)
-        end
-    end
-    
-    function Notif:SetDesc(NewDesc)
-        if NewDesc then
-            -- Buscar si ya existe una descripción
-            local DescLabel
-            for _, child in ipairs(TextContainer:GetChildren()) do
-                if child:IsA("TextLabel") and child ~= TitleLabel then
-                    DescLabel = child
-                    break
+    return {
+        Close = Close,
+        SetTitle = function(_, t) if t then TitleLabel.Text = tostring(t) end end,
+        SetDesc = function(_, d) 
+            if d then
+                local descLabel = TextContainer:FindFirstChildOfClass("TextLabel")
+                if descLabel and descLabel ~= TitleLabel then
+                    descLabel.Text = tostring(d)
                 end
             end
-            
-            if DescLabel then
-                DescLabel.Text = tostring(NewDesc)
-            else
-                InsertTheme(Create("TextLabel", TextContainer, {
-                    AutomaticSize = "Y",
-                    Size = UDim2.new(1, 0, 0, 0),
-                    TextWrapped = true,
-                    TextXAlignment = "Left",
-                    RichText = true,
-                    BackgroundTransparency = 1,
-                    TextTransparency = 0.4,
-                    TextSize = 15,
-                    Text = NewDesc,
-                    Font = Enum.Font.Gotham,
-                    TextColor3 = Theme["Color Dark Text"]
-                }), "DarkText")
-            end
         end
-    end
-    
-    return Notif
+    }
 end
 
--- Función adicional para cambiar la posición de las notificaciones (como en WindUI)
+-- Función para cambiar posición
 function novalib:SetNotificationLower(Lower)
     if self.NotificationHolder then
         self.NotificationHolder.Size = Lower and 
