@@ -32,7 +32,7 @@ local novalib = {
 	Elements = {},
 	Options = {},
 	Tabs = {},
-	Icons = loadstring(game:HttpGet("https://pastefy.app/phzWzDsM/raw"))()
+	Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/cxnker/WindUI/refs/heads/main/WindUI_Nova/lucide-icons.lua"))()
 }
 
 local ViewportSize = workspace.CurrentCamera.ViewportSize
@@ -448,26 +448,11 @@ local function GetColor(Instance)
 	return ""
 end
 
-function novalib:GetIcon(index)
-	if type(index) ~= "string" or index:find("rbxassetid://") or #index == 0 then
-		return index
-	end
-	
-	local firstMatch = nil
-	index = string.lower(index):gsub("lucide", ""):gsub("-", "")
-	
-	if self.Icons[index] then
-		return self.Icons[index]
-	end
-	
-	for Name, Icon in pairs(self.Icons) do
-		if Name == index then
-			return Icon
-		elseif not firstMatch and Name:find(index, 1, true) then
-			firstMatch = Icon
-		end
-	end
-	return firstMatch or index
+function novalib:GetIcon(name)
+	if type(name) ~= "string" then return "rbxassetid://10747384394" end
+	if name:find("rbxassetid://") then return name end
+	local icon = self.Icons[name:lower():gsub("-", "")]
+	return icon or "rbxassetid://10747384394"
 end
 
 local ThemeHandlers = {
@@ -1738,8 +1723,6 @@ function novalib:MakeWindow(Configs)
 			return DiscordInvite
 		end
 
-			
---[[
 function novalib:Notify(Configs)
     -- Configuración
     Configs = Configs or {}
@@ -1995,7 +1978,7 @@ function novalib:SetNotificationLower(Lower)
     end
 end
 
-USES:
+--[[USES:
 			
 -- Notificación simple
 novalib:Notify({
@@ -2028,186 +2011,7 @@ notif:Close()
 
 -- Cambiar posición de notificaciones
 novalib:SetNotificationLower(true)  -- Posición más baja
-novalib:SetNotificationLower(false) -- Posición normal]]	
-
---[[
-    Sistema de Notificaciones Optimizado para Nova Lib
-    Diseño y animaciones EXACTAS de WindUI 1.6.1
-]]
-
-function novalib:Notify(Configs)
-    Configs = Configs or {}
-    local Title = Configs.Title or "Notification"
-    local Content = Configs.Content or ""
-    local Icon = Configs.Icon and self:GetIcon(Configs.Icon) or "rbxassetid://10747384394"
-    local Duration = Configs.Duration or 5
-    
-    -- Crear contenedor si no existe
-    if not self.NotificationHolder then
-        self.NotificationHolder = Create("Frame", ScreenGui, {
-            Name = "NotificationHolder",
-            Size = UDim2.new(0, 300, 1, -156),
-            Position = UDim2.new(1, -29, 0, 56),
-            AnchorPoint = Vector2.new(1, 0),
-            BackgroundTransparency = 1
-        }, {
-            Create("UIListLayout", {
-                VerticalAlignment = "Bottom",
-                Padding = UDim.new(0, 8)
-            }),
-            Create("UIPadding", {PaddingBottom = UDim.new(0, 29)})
-        })
-    end
-    
-    -- CanvasGroup principal (para fade)
-    local CanvasGroup = Create("CanvasGroup", self.NotificationHolder, {
-        Name = "Notification",
-        Size = UDim2.new(1, 0, 0, 0),
-        Position = UDim2.new(2, 0, 1, 0), -- Comienza fuera
-        AnchorPoint = Vector2.new(0, 1),
-        AutomaticSize = "Y",
-        BackgroundTransparency = 1,
-        GroupTransparency = 1
-    })
-    
-    -- Contenido de la notificación
-    local ContentFrame = InsertTheme(Create("Frame", CanvasGroup, {
-        Size = UDim2.new(1, 0, 0, 0),
-        AutomaticSize = "Y",
-        BackgroundColor3 = Theme["Color Hub 2"],
-        BackgroundTransparency = 0.25
-    }), "Frame")
-    Make("Corner", ContentFrame, UDim.new(0, 16))
-    Make("Stroke", ContentFrame)
-    
-    -- Ícono
-    local IconLabel = InsertTheme(Create("ImageLabel", ContentFrame, {
-        Size = UDim2.new(0, 24, 0, 24),
-        Position = UDim2.new(0, 12, 0, 12),
-        Image = Icon,
-        BackgroundTransparency = 1,
-        ImageColor3 = Theme["Color Theme"]
-    }), "Theme")
-    
-    -- Botón cerrar
-    local CloseBtn = InsertTheme(Create("ImageButton", ContentFrame, {
-        Size = UDim2.new(0, 16, 0, 16),
-        Position = UDim2.new(1, -12, 0, 12),
-        AnchorPoint = Vector2.new(1, 0),
-        Image = "rbxassetid://10747384394",
-        BackgroundTransparency = 1,
-        ImageColor3 = Theme["Color Text"]
-    }), "Text")
-    
-    -- Efecto hover del botón cerrar
-    CloseBtn.MouseEnter:Connect(function()
-        CreateTween({CloseBtn, "ImageColor3", Color3.fromRGB(255, 80, 80), 0.15})
-    end)
-    CloseBtn.MouseLeave:Connect(function()
-        CreateTween({CloseBtn, "ImageColor3", Theme["Color Text"], 0.15})
-    end)
-    
-    -- Contenedor de texto
-    local TextContainer = Create("Frame", ContentFrame, {
-        Size = UDim2.new(1, -52, 0, 0),
-        Position = UDim2.new(0, 44, 0, 8),
-        BackgroundTransparency = 1,
-        AutomaticSize = "Y"
-    }, {
-        Create("UIListLayout", {Padding = UDim.new(0, 2)}),
-        Create("UIPadding", {PaddingBottom = UDim.new(0, 8)})
-    })
-    
-    -- Título
-    local TitleLabel = InsertTheme(Create("TextLabel", TextContainer, {
-        Size = UDim2.new(1, 0, 0, 0),
-        AutomaticSize = "Y",
-        Text = Title,
-        Font = Enum.Font.GothamBold,
-        TextSize = 14,
-        TextColor3 = Theme["Color Text"],
-        TextXAlignment = "Left",
-        BackgroundTransparency = 1
-    }), "Text")
-    
-    -- Descripción (solo si existe)
-    if Content and Content ~= "" then
-        InsertTheme(Create("TextLabel", TextContainer, {
-            Size = UDim2.new(1, 0, 0, 0),
-            AutomaticSize = "Y",
-            Text = Content,
-            Font = Enum.Font.Gotham,
-            TextSize = 12,
-            TextColor3 = Theme["Color Dark Text"],
-            TextXAlignment = "Left",
-            BackgroundTransparency = 1
-        }), "DarkText")
-    end
-    
-    -- Barra de progreso (para duración)
-    local ProgressBar
-    if Duration > 0 then
-        ProgressBar = InsertTheme(Create("Frame", ContentFrame, {
-            Size = UDim2.new(1, 0, 0, 3),
-            Position = UDim2.new(0, 0, 1, -3),
-            BackgroundColor3 = Theme["Color Theme"],
-            BackgroundTransparency = 0.5
-        }), "Theme")
-    end
-    
-    -- Función de cierre
-    local Closed = false
-    local function Close()
-        if Closed then return end
-        Closed = true
-        
-        -- ANIMACIÓN DE SALIDA (exactamente como WindUI)
-        CreateTween({CanvasGroup, "GroupTransparency", 1, 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-        CreateTween({CanvasGroup, "Position", UDim2.new(2, 0, 1, 0), 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-        
-        task.wait(0.45)
-        CanvasGroup:Destroy()
-    end
-    
-    CloseBtn.MouseButton1Click:Connect(Close)
-    
-    -- ANIMACIÓN DE ENTRADA (exactamente como WindUI)
-    CreateTween({CanvasGroup, "GroupTransparency", 0, 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-    CreateTween({CanvasGroup, "Position", UDim2.new(0, 0, 1, 0), 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
-    
-    -- Auto-cierre con animación de barra de progreso (exactamente como WindUI)
-    if Duration > 0 then
-        CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 3), Duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut})
-        
-        task.spawn(function()
-            task.wait(Duration)
-            Close()
-        end)
-    end
-    
-    -- Métodos públicos
-    return {
-        Close = Close,
-        SetTitle = function(_, t) if t then TitleLabel.Text = tostring(t) end end,
-        SetDesc = function(_, d) 
-            if d then
-                local descLabel = TextContainer:FindFirstChildOfClass("TextLabel")
-                if descLabel and descLabel ~= TitleLabel then
-                    descLabel.Text = tostring(d)
-                end
-            end
-        end
-    }
-end
-
--- Función para cambiar posición (exactamente como WindUI)
-function novalib:SetNotificationLower(Lower)
-    if self.NotificationHolder then
-        self.NotificationHolder.Size = Lower and 
-            UDim2.new(0, 300, 1, -56) or 
-            UDim2.new(0, 300, 1, -156)
-    end
-end
+novalib:SetNotificationLower(false) -- Posición normal]]
       
 		return Tab
 	end
