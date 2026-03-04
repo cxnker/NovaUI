@@ -2032,7 +2032,7 @@ novalib:SetNotificationLower(false) -- Posición normal]]
 
 --[[
     Sistema de Notificaciones Optimizado para Nova Lib
-    Diseño WindUI 1.6.1 con animaciones de deslizamiento
+    Diseño y animaciones EXACTAS de WindUI 1.6.1
 ]]
 
 function novalib:Notify(Configs)
@@ -2059,17 +2059,19 @@ function novalib:Notify(Configs)
         })
     end
     
-    -- Frame principal de la notificación
-    local Notification = Create("Frame", self.NotificationHolder, {
+    -- CanvasGroup principal (para fade)
+    local CanvasGroup = Create("CanvasGroup", self.NotificationHolder, {
+        Name = "Notification",
         Size = UDim2.new(1, 0, 0, 0),
-        BackgroundTransparency = 1,
+        Position = UDim2.new(2, 0, 1, 0), -- Comienza fuera
+        AnchorPoint = Vector2.new(0, 1),
         AutomaticSize = "Y",
-        Position = UDim2.new(2, 0, 1, 0), -- Comienza fuera de la pantalla (derecha)
-        AnchorPoint = Vector2.new(0, 1)
+        BackgroundTransparency = 1,
+        GroupTransparency = 1
     })
     
     -- Contenido de la notificación
-    local ContentFrame = InsertTheme(Create("Frame", Notification, {
+    local ContentFrame = InsertTheme(Create("Frame", CanvasGroup, {
         Size = UDim2.new(1, 0, 0, 0),
         AutomaticSize = "Y",
         BackgroundColor3 = Theme["Color Hub 2"],
@@ -2142,40 +2144,41 @@ function novalib:Notify(Configs)
         }), "DarkText")
     end
     
-    -- Barra de progreso
+    -- Barra de progreso (para duración)
     local ProgressBar
     if Duration > 0 then
         ProgressBar = InsertTheme(Create("Frame", ContentFrame, {
-            Size = UDim2.new(1, 0, 0, 2),
-            Position = UDim2.new(0, 0, 1, -2),
+            Size = UDim2.new(1, 0, 0, 3),
+            Position = UDim2.new(0, 0, 1, -3),
             BackgroundColor3 = Theme["Color Theme"],
             BackgroundTransparency = 0.5
         }), "Theme")
-        Make("Corner", ProgressBar, UDim.new(1, 0))
     end
     
-    -- Función de cierre con animación de deslizamiento a la derecha
+    -- Función de cierre
     local Closed = false
     local function Close()
         if Closed then return end
         Closed = true
         
-        -- Animación de salida: deslizar hacia la derecha
-        CreateTween({Notification, "Position", UDim2.new(2, 0, 1, 0), 0.3})
-        task.wait(0.3)
-        Notification:Destroy()
+        -- ANIMACIÓN DE SALIDA (exactamente como WindUI)
+        CreateTween({CanvasGroup, "GroupTransparency", 1, 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
+        CreateTween({CanvasGroup, "Position", UDim2.new(2, 0, 1, 0), 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
+        
+        task.wait(0.45)
+        CanvasGroup:Destroy()
     end
     
     CloseBtn.MouseButton1Click:Connect(Close)
     
-    -- ANIMACIÓN DE ENTRADA: deslizar desde la derecha hacia la izquierda
-    -- La notificación comienza en Position UDim2.new(2, 0, 1, 0) (fuera de pantalla)
-    -- La animación la mueve a UDim2.new(0, 0, 1, 0) (visible)
-    CreateTween({Notification, "Position", UDim2.new(0, 0, 1, 0), 0.3})
+    -- ANIMACIÓN DE ENTRADA (exactamente como WindUI)
+    CreateTween({CanvasGroup, "GroupTransparency", 0, 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
+    CreateTween({CanvasGroup, "Position", UDim2.new(0, 0, 1, 0), 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out})
     
-    -- Auto-cierre
+    -- Auto-cierre con animación de barra de progreso (exactamente como WindUI)
     if Duration > 0 then
-        CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 2), Duration})
+        CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 3), Duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut})
+        
         task.spawn(function()
             task.wait(Duration)
             Close()
@@ -2197,7 +2200,7 @@ function novalib:Notify(Configs)
     }
 end
 
--- Función para cambiar posición
+-- Función para cambiar posición (exactamente como WindUI)
 function novalib:SetNotificationLower(Lower)
     if self.NotificationHolder then
         self.NotificationHolder.Size = Lower and 
