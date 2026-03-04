@@ -1739,18 +1739,9 @@ function novalib:MakeWindow(Configs)
 		end
 
 --[[
-    Sistema de Notificaciones para Nova Lib
+    Sistema de Notificaciones para Nova Lib - CORREGIDO
     Adaptado de WindUI 1.6.1
-    Características:
-    - Íconos personalizables (soporte para lucide icons)
-    - Animaciones suaves con TweenService
-    - Título y descripción
-    - Botón X para cerrar
-    - Auto-cierre con duración configurable
-    - Esquinas redondeadas
 ]]
-
--- Agregar al final de tu archivo nova_lt.lua, antes del "return novalib"
 
 function novalib:Notify(Configs)
     -- Configuración por defecto
@@ -1761,7 +1752,7 @@ function novalib:Notify(Configs)
     local Duration = Configs.Duration or 5 -- segundos, 0 = permanente
     local Background = Configs.Background or nil
     
-    -- Obtener el ícono (soporte para lucide icons)
+    -- Obtener el ícono
     local IconAsset = self:GetIcon(Icon)
     if not IconAsset:find("rbxassetid://") then
         IconAsset = "rbxassetid://10747384394" -- Icono por defecto (info)
@@ -1771,8 +1762,8 @@ function novalib:Notify(Configs)
     if not self.NotificationHolder then
         self.NotificationHolder = Create("Frame", ScreenGui, {
             Name = "NotificationHolder",
-            Size = UDim2.new(0, 320, 1, -20),
-            Position = UDim2.new(1, -10, 0.5),
+            Size = UDim2.new(0, 340, 1, -40),
+            Position = UDim2.new(1, -20, 0.5),
             AnchorPoint = Vector2.new(1, 0.5),
             BackgroundTransparency = 1,
             ClipsDescendants = true
@@ -1783,7 +1774,7 @@ function novalib:Notify(Configs)
                 Padding = UDim.new(0, 8)
             }),
             Create("UIPadding", {
-                PaddingBottom = UDim.new(0, 10)
+                PaddingBottom = UDim.new(0, 20)
             })
         })
     end
@@ -1794,10 +1785,12 @@ function novalib:Notify(Configs)
         Size = UDim2.new(1, 0, 0, 0),
         BackgroundTransparency = 1,
         AutomaticSize = "Y",
-        LayoutOrder = 999 - (#self.NotificationHolder:GetChildren() - 2)
+        LayoutOrder = 999 - (#self.NotificationHolder:GetChildren() - 2),
+        ClipsDescendants = true,
+        Visible = false -- Inicialmente invisible para la animación
     })
     
-    -- Contenedor principal con gradiente
+    -- Contenedor principal
     local MainFrame = InsertTheme(Create("Frame", Notification, {
         Size = UDim2.new(1, -20, 0, 0),
         Position = UDim2.new(0, 10, 0, 10),
@@ -1808,7 +1801,7 @@ function novalib:Notify(Configs)
     Make("Corner", MainFrame, UDim.new(0, 12))
     Make("Stroke", MainFrame)
     
-    -- Gradiente opcional
+    -- Gradiente o fondo
     if Background then
         local Gradient = Create("ImageLabel", MainFrame, {
             Size = UDim2.new(1, 0, 1, 0),
@@ -1836,13 +1829,12 @@ function novalib:Notify(Configs)
         Size = UDim2.new(0, 16, 0, 16),
         Position = UDim2.new(1, -12, 0, 12),
         AnchorPoint = Vector2.new(1, 0),
-        Image = "rbxassetid://10747384394", -- Icono X
+        Image = "rbxassetid://10747384394",
         BackgroundTransparency = 1,
         ImageColor3 = Theme["Color Text"],
         AutoButtonColor = false
     }), "Text")
     
-    -- Efectos hover para el botón X
     CloseButton.MouseEnter:Connect(function()
         CreateTween({CloseButton, "ImageColor3", Color3.fromRGB(255, 80, 80), 0.2})
     end)
@@ -1893,37 +1885,49 @@ function novalib:Notify(Configs)
     end
     
     -- Barra de progreso (para duración)
-    local ProgressBar
+    local ProgressBar, ProgressBarContainer
     if Duration > 0 then
-        ProgressBar = InsertTheme(Create("Frame", MainFrame, {
-            Size = UDim2.new(1, -4, 0, 2),
-            Position = UDim2.new(0.5, 0, 1, -2),
+        ProgressBarContainer = Create("Frame", MainFrame, {
+            Size = UDim2.new(1, -24, 0, 2),
+            Position = UDim2.new(0.5, 0, 1, -6),
             AnchorPoint = Vector2.new(0.5, 1),
+            BackgroundTransparency = 1
+        })
+        
+        ProgressBar = InsertTheme(Create("Frame", ProgressBarContainer, {
+            Size = UDim2.new(1, 0, 1, 0),
             BackgroundColor3 = Theme["Color Theme"],
-            BackgroundTransparency = 0.5
+            BackgroundTransparency = 0.3
         }), "Theme")
         Make("Corner", ProgressBar, UDim.new(1, 0))
     end
     
-    -- Ajustar posición del contenedor de texto
-    if not DescLabel then
-        TitleLabel.Size = UDim2.new(1, -16, 0, 16)
-        TextContainer.Size = UDim2.new(1, -60, 0, 16)
-    end
+    -- Variables de control
+    local IsClosing = false
     
     -- Función para cerrar la notificación
     local function Close()
-        if Notification.Closed then return end
-        Notification.Closed = true
+        if IsClosing or not Notification or not Notification.Parent then return end
+        IsClosing = true
+        
+        -- Cancelar cualquier tarea pendiente
+        if CloseTask then
+            task.cancel(CloseTask)
+            CloseTask = nil
+        end
         
         -- Animación de salida
+        Notification.Size = UDim2.new(1, 0, 0, MainFrame.AbsoluteSize.Y + 20)
         CreateTween({Notification, "Size", UDim2.new(1, 0, 0, 0), 0.3, true})
         CreateTween({Notification, "BackgroundTransparency", 1, 0.3})
         
         task.wait(0.3)
-        Notification:Destroy()
         
-        -- Reorganizar LayoutOrder
+        if Notification and Notification.Parent then
+            Notification:Destroy()
+        end
+        
+        -- Reorganizar LayoutOrder de las notificaciones restantes
         local count = 999
         for _, child in ipairs(self.NotificationHolder:GetChildren()) do
             if child:IsA("Frame") and child ~= Notification then
@@ -1936,20 +1940,26 @@ function novalib:Notify(Configs)
     -- Conectar botón de cerrar
     CloseButton.MouseButton1Click:Connect(Close)
     
+    -- Animación de entrada
+    Notification.Visible = true
+    Notification.Size = UDim2.new(1, 0, 0, 1)
+    task.wait()
+    CreateTween({Notification, "Size", UDim2.new(1, 0, 0, MainFrame.AbsoluteSize.Y + 20), 0.4, true})
+    
     -- Auto-cerrar después de la duración
+    local CloseTask
     if Duration > 0 then
         -- Animación de la barra de progreso
-        CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 2), Duration, true})
+        if ProgressBar then
+            CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 1, 0), Duration, true})
+        end
         
-        task.spawn(function()
+        -- Programar el cierre
+        CloseTask = task.spawn(function()
             task.wait(Duration)
             Close()
         end)
     end
-    
-    -- Animación de entrada
-    Notification.Size = UDim2.new(1, 0, 0, 1)
-    CreateTween({Notification, "Size", UDim2.new(1, 0, 0, MainFrame.AbsoluteSize.Y + 20), 0.4, true})
     
     -- Métodos públicos
     local Notif = {}
@@ -1958,7 +1968,7 @@ function novalib:Notify(Configs)
     end
     
     function Notif:SetTitle(NewTitle)
-        if NewTitle then
+        if NewTitle and TitleLabel then
             TitleLabel.Text = tostring(NewTitle)
         end
     end
