@@ -74,21 +74,15 @@ Tab1:AddTextBox({
 
 Tab1:AddButton({"Custom Theme", function()
 Library:Notify({
-    Title = "Éxito",
-    Content = "Operación completada",
+    Title = "Especial",
+    Content = "Con fondo personalizado",
     Icon = "rbxassetid://10723415903",
-    Duration = 3
+    Background = "rbxassetid://13511292247",
+    Duration = 4
 })
 end})
 
 Library:Notify({
-    Title = "Éxito",
-    Content = "Operación completada",
-    Icon = "rbxassetid://10723415903",
-    Duration = 3
-})
-
-Windows:Notify({
     Title = "Éxito",
     Content = "Operación completada",
     Icon = "rbxassetid://10723415903",
