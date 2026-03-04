@@ -1740,7 +1740,7 @@ function novalib:MakeWindow(Configs)
 
 --[[
     Sistema de Notificaciones Optimizado para Nova Lib
-    Diseño WindUI 1.6.1 pero más compacto
+    Con animaciones de entrada y salida
 ]]
 
 function novalib:Notify(Configs)
@@ -1772,7 +1772,7 @@ function novalib:Notify(Configs)
         Size = UDim2.new(1, 0, 0, 0),
         BackgroundTransparency = 1,
         AutomaticSize = "Y",
-        Position = UDim2.new(2, 0, 1, 0),
+        Position = UDim2.new(2, 0, 1, 0), -- Fuera de la pantalla (derecha)
         AnchorPoint = Vector2.new(0, 1)
     })
     
@@ -1868,15 +1868,15 @@ function novalib:Notify(Configs)
         if Closed then return end
         Closed = true
         
+        -- Animación de salida (deslizar hacia la derecha)
         CreateTween({Notification, "Position", UDim2.new(2, 0, 1, 0), 0.25})
-        CreateTween({Notification, "BackgroundTransparency", 1, 0.25})
         task.wait(0.25)
         Notification:Destroy()
     end
     
     CloseBtn.MouseButton1Click:Connect(Close)
     
-    -- Animación de entrada
+    -- Animación de entrada (deslizar desde la derecha)
     CreateTween({Notification, "Position", UDim2.new(0, 0, 1, 0), 0.3})
     
     -- Auto-cierre
