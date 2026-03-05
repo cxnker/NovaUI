@@ -11,15 +11,15 @@ Window:AddMinimizeButton({
     Corner = { CornerRadius = UDim.new(1,1) },
 })
 
-local Tab1 = Window:MakeTab({"Tab1", "info"})
-local Tab2 = Window:MakeTab({"Tab2", "house"})
+local Tab1 = Window:MakeTab({"Tab1", "rbxassetid://124560466474914"})
+local Tab2 = Window:MakeTab({"Tab2", "rbxassetid://98755624629571"})
 
 Tab1:AddButton({"Custom Theme", function()
   Library:SetTheme("Custom")
 end})
 
 Window:SelectTab(Tab2)
-local Section = Tab2:AddSection({"Section", "info"})
+local Section = Tab2:AddSection({"Section", "rbxassetid://124560466474914"})
 
 Tab2:AddDiscordInvite({
     Name = "Name Hub",
