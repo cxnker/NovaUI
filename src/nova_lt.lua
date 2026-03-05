@@ -6,7 +6,7 @@ local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
-local novalib = {
+local NovaUI = {
 	Themes = {
 		Custom = {
 			["Color Hub 1"] = ColorSequence.new({
@@ -38,11 +38,11 @@ local novalib = {
 local ViewportSize = workspace.CurrentCamera.ViewportSize
 local UIScale = ViewportSize.Y / 450
 
-local Settings = novalib.Settings
+local Settings = NovaUI.Settings
 
 local SetProps, SetChildren, InsertTheme, Create do
 	InsertTheme = function(Instance, Type)
-		table.insert(novalib.Instances, {Instance = Instance, Type = Type})
+		table.insert(NovaUI.Instances, {Instance = Instance, Type = Type})
 		return Instance
 	end
 	
@@ -85,14 +85,14 @@ local SetProps, SetChildren, InsertTheme, Create do
 			local decode = HttpService:JSONDecode(readfile(file))
 			
 			if type(decode) == "table" then
-				if decode.UISize then novalib.Save.UISize = decode.UISize end
-				if decode.TabSize then novalib.Save.TabSize = decode.TabSize end
-				if decode.Theme and VerifyTheme(decode.Theme) then novalib.Save.Theme = decode.Theme end
+				if decode.UISize then NovaUI.Save.UISize = decode.UISize end
+				if decode.TabSize then NovaUI.Save.TabSize = decode.TabSize end
+				if decode.Theme and VerifyTheme(decode.Theme) then NovaUI.Save.Theme = decode.Theme end
 			end
 		end
 	end
 	
-	pcall(Save, "novalib.json")
+	pcall(Save, "NovaUI.json")
 end
 
 local Funcs = {} do
@@ -157,7 +157,7 @@ local Funcs = {} do
 	end
 end
 
-local Connections, Connection = {}, novalib.Connection do
+local Connections, Connection = {}, NovaUI.Connection do
 	local function NewConnectionList(List)
 		if type(List) ~= "table" then return end
 		
@@ -281,7 +281,7 @@ local function MakeDrag(Instance)
 end
 
 local function VerifyTheme(Theme)
-	for name in pairs(novalib.Themes) do
+	for name in pairs(NovaUI.Themes) do
 		if name == Theme then return true end
 	end
 	return false
@@ -294,14 +294,14 @@ local function SaveJson(FileName, save)
 	end
 end
 
-local Theme = novalib.Themes[novalib.Save.Theme]
+local Theme = NovaUI.Themes[NovaUI.Save.Theme]
 
 local function AddEle(Name, Func)
-	novalib.Elements[Name] = Func
+	NovaUI.Elements[Name] = Func
 end
 
 local function Make(Ele, Instance, props, ...)
-	return novalib.Elements[Ele](Instance, props, ...)
+	return NovaUI.Elements[Ele](Instance, props, ...)
 end
 
 AddEle("Corner", function(parent, CornerRadius)
@@ -448,7 +448,7 @@ local function GetColor(Instance)
 	return ""
 end
 
-function novalib:GetIcon(name)
+function NovaUI:GetIcon(name)
 	if type(name) ~= "string" then return "" end
 	if name:find("rbxassetid://") then return name end
 	local icon = self.Icons[name:lower():gsub("-", "")]
@@ -465,11 +465,11 @@ local ThemeHandlers = {
 	ScrollBar = function(inst) inst[GetColor(inst)] = Theme["Color Theme"] end,
 }
 
-function novalib:SetTheme(NewTheme)
+function NovaUI:SetTheme(NewTheme)
 	if not VerifyTheme(NewTheme) then return end
 	
 	self.Save.Theme = NewTheme
-	SaveJson("novalib.json", self.Save)
+	SaveJson("NovaUI.json", self.Save)
 	Theme = self.Themes[NewTheme]
 	
 	Connection:FireConnection("ThemeChanged", NewTheme)
@@ -482,16 +482,16 @@ function novalib:SetTheme(NewTheme)
 	end
 end
 
-function novalib:SetScale(NewScale)
+function NovaUI:SetScale(NewScale)
 	NewScale = ViewportSize.Y / math.clamp(NewScale, 300, 2000)
 	UIScale, ScreenGui.Scale.Scale = NewScale, NewScale
 end
 
-function novalib:MakeWindow(Configs)
+function NovaUI:MakeWindow(Configs)
 	local WTitle = Configs[1] or Configs.Name or Configs.Title or "Nova UI Library"
 	local WMiniText = Configs[2] or Configs.SubTitle or "by Nova"
 	
-	local UISizeX, UISizeY = unpack(novalib.Save.UISize)
+	local UISizeX, UISizeY = unpack(NovaUI.Save.UISize)
 	local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
 		Size = UDim2.fromOffset(UISizeX, UISizeY),
 		Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
@@ -540,7 +540,7 @@ function novalib:MakeWindow(Configs)
 	}), "Text")
 
 	local MainScroll = InsertTheme(Create("ScrollingFrame", Components, {
-		Size = UDim2.new(0, novalib.Save.TabSize, 1, -TopBar.Size.Y.Offset),
+		Size = UDim2.new(0, NovaUI.Save.TabSize, 1, -TopBar.Size.Y.Offset),
 		ScrollBarImageColor3 = Theme["Color Theme"],
 		Position = UDim2.new(0, 0, 1, 0),
 		AnchorPoint = Vector2.new(0, 1),
@@ -608,14 +608,14 @@ function novalib:MakeWindow(Configs)
 	
 	ConnectSave(ControlSize1, function()
 		if not Minimized then
-			novalib.Save.UISize = {MainFrame.Size.X.Offset, MainFrame.Size.Y.Offset}
-			SaveJson("novalib.json", novalib.Save)
+			NovaUI.Save.UISize = {MainFrame.Size.X.Offset, MainFrame.Size.Y.Offset}
+			SaveJson("NovaUI.json", NovaUI.Save)
 		end
 	end)
 	
 	ConnectSave(ControlSize2, function()
-		novalib.Save.TabSize = MainScroll.Size.X.Offset
-		SaveJson("novalib.json", novalib.Save)
+		NovaUI.Save.TabSize = MainScroll.Size.X.Offset
+		SaveJson("NovaUI.json", NovaUI.Save)
 	end)
 	
 	local ButtonsFolder = Create("Folder", TopBar, {Name = "Buttons"})
@@ -728,7 +728,7 @@ function novalib:MakeWindow(Configs)
 		local TName = Configs[1] or Configs.Title or "Tab!"
 		local TIcon = Configs[2] or Configs.Icon or ""
 		
-		TIcon = novalib:GetIcon(TIcon)
+		TIcon = NovaUI:GetIcon(TIcon)
 		if not TIcon:find("rbxassetid://") or TIcon:gsub("rbxassetid://", ""):len() < 6 then
 			TIcon = false
 		end
@@ -809,7 +809,7 @@ function novalib:MakeWindow(Configs)
 			Container.Parent = Containers
 			Container.Size = UDim2.new(1, 0, 1, 150)
 			
-			for _, Tab in ipairs(novalib.Tabs) do
+			for _, Tab in ipairs(NovaUI.Tabs) do
 				if Tab.Cont ~= Container then
 					Tab.func:Disable()
 				end
@@ -826,7 +826,7 @@ function novalib:MakeWindow(Configs)
 		
 		FirstTab = true
 		local Tab = {}
-		table.insert(novalib.Tabs, {TabInfo = {Name = TName, Icon = TIcon}, func = Tab, Cont = Container})
+		table.insert(NovaUI.Tabs, {TabInfo = {Name = TName, Icon = TIcon}, func = Tab, Cont = Container})
 		Tab.Cont = Container
 		
 		function Tab:Disable()
@@ -867,7 +867,7 @@ function novalib:MakeWindow(Configs)
 					Position = UDim2.new(0, 8, 0.5),
 					AnchorPoint = Vector2.new(0, 0.5),
 					BackgroundTransparency = 1,
-					Image = novalib:GetIcon(SectionIcon),
+					Image = NovaUI:GetIcon(SectionIcon),
 					ImageColor3 = Theme["Color Text"]
 				})
 			end
@@ -885,7 +885,7 @@ function novalib:MakeWindow(Configs)
 			}), "Theme")
 	
 			local Section = {}
-			table.insert(novalib.Options, {type = "Section", Name = SectionName, func = Section})
+			table.insert(NovaUI.Options, {type = "Section", Name = SectionName, func = Section})
 	
 			function Section:Visible(Bool)
 				if Bool == nil then
@@ -1730,4 +1730,4 @@ function novalib:MakeWindow(Configs)
 	return Window
 end
 
-return novalib
+return NovaUI
