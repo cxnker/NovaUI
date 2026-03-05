@@ -1,6 +1,6 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/cxnker/NovaUI/main/src/nova.lua"))()
 
---[[function gradient(text, startColor, endColor)
+function gradient(text, startColor, endColor)
     local result = ""
     local length = #text
 
@@ -17,7 +17,7 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/cxnke
     return result
 end
 
-local Paragraph = Tab2:AddParagraph({"Paragraph " .. gradient("NovaUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")) .. " Lib"})]]
+local Paragraph = Tab2:AddParagraph({"Paragraph " .. gradient("NovaUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")) .. " Lib"})
 
 local Window = Library:MakeWindow({
   Title = "Nova UI | Example",
@@ -145,13 +145,6 @@ Library:Notify({
     Duration = 4
 })
 end})
-
-Library:Notify({
-    Title = "Success",
-    Content = "Description",
-    Icon = "rbxassetid://10723415903",
-    Duration = 3
-})
 
 --[[ Soon
 Tab3:Dropdown({
