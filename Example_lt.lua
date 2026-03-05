@@ -10,23 +10,24 @@ Window:AddMinimizeButton({
     Corner = { CornerRadius = UDim.new(1,1) },
 })
 
-local Tab1 = Window:MakeTab({"Tab", "rbxassetid://10723415903"})
+local Tab1 = Window:MakeTab({"Info", "rbxassetid://10723415903"})
+local Tab2 = Window:MakeTab({"Custom", "rbxassetid://137986121120732"})
 
 Tab1:AddDiscordInvite({
     Name = "Server Name",
-    Description = "Join server",
+    Description = "Server Description",
     Logo = "rbxassetid://18751483361",
     Invite = "Link discord invite",
 })
 
-local Section = Tab1:AddSection({"Section", "rbxassetid://10723415903"})
+local Section = Tab1:AddSection({"Section", "info"})
 
 local Paragraph = Tab1:AddParagraph({"Paragraph", "This is a Paragraph\nSecond Line"})
 
 local Toggle1 = Tab1:AddToggle({
-  Name = "Toggle",
-  Description = "This is a <font color='rgb(88, 101, 242)'>Toggle</font> Example",
-  Default = false 
+    Name = "Toggle",
+    Description = "This is a <font color='rgb(88, 101, 242)'>Toggle</font> Example",
+    Default = false 
 })
 
 Toggle1:Callback(function(Value)
@@ -42,32 +43,49 @@ Tab1:AddToggle({
 })
 
 Tab1:AddSlider({
-  Name = "Speed",
-  Min = 1,
-  Max = 100,
-  Increase = 1,
-  Default = 16,
-  Callback = function(Value)
+    Name = "Slider Name",
+    Description = "Slider Description", 
+    Min = 1,
+    Max = 100,
+    Increase = 1,
+    Default = 16,
+    Callback = function(Value)
   
-  end
-})
-
-local Dropdown = Tab1:AddDropdown({
-  Name = "Players List",
-  Description = "Select the <font color='rgb(88, 101, 242)'>Number</font>",
-  Options = {"one", "two", "three"},
-  Default = "two",
-  Flag = "dropdown teste",
-  Callback = function(Value)
-    
-  end
+    end
 })
 
 Tab1:AddTextBox({
-  Name = "Name item",
-  Description = "1 Item on 1 Server", 
-  PlaceholderText = "item only",
-  Callback = function(Value)
+    Name = "Textbox Name",
+    Description = "Textbox Description", 
+    PlaceholderText = "Textbox Text",
+    Callback = function(Value)
     
-  end
+    end
 })
+
+local Dropdown = Tab1:AddDropdown({
+    Name = "Players List",
+    Description = "Select the <font color='rgb(88, 101, 242)'>Number</font>",
+    Options = {"One", "Two", "Three"},
+    Default = "Two",
+    -- Flag = "dropdown_data",
+    Callback = function(Value)
+    
+    end
+})
+
+local Button = Tab1:AddButton({"Refresh Dropdown"})
+
+Button:Callback(function()
+    Dropdown:Set(game.Players:GetPlayers())
+    Dropdown:Remove(game.Players.LocalPlayer.Name)
+end)
+
+Dropdown:Remove(Player.Name)
+Dropdown:Select(1)
+
+Tab2:AddSection({"Theme", "pencil"})
+
+Tab2:AddButton({"Set Custom Theme", function()
+    Library:SetTheme("Custom")
+end})
