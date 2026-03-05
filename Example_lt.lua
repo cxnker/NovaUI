@@ -84,7 +84,7 @@ end)
 Dropdown:Remove(Player.Name)
 Dropdown:Select(1)
 
-Tab2:AddSection({"Theme", "pencil"})
+local Section2 = Tab2:AddSection({"Theme", "pencil"})
 
 Tab2:AddButton({"Set Custom Theme", function()
     Library:SetTheme("Custom")
