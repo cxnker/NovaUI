@@ -32,7 +32,7 @@ local novalib = {
 	Elements = {},
 	Options = {},
 	Tabs = {},
-	Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/cxnker/WindUI/refs/heads/main/WindUI_Nova/lucide-icons.lua"))()
+	Icons = loadstring(game:HttpGet("https://pastefy.app/UaIbDJCd/raw"))()
 }
 
 local ViewportSize = workspace.CurrentCamera.ViewportSize
@@ -449,10 +449,10 @@ local function GetColor(Instance)
 end
 
 function novalib:GetIcon(name)
-	if type(name) ~= "string" then return "rbxassetid://10747384394" end
+	if type(name) ~= "string" then return "" end
 	if name:find("rbxassetid://") then return name end
 	local icon = self.Icons[name:lower():gsub("-", "")]
-	return icon or "rbxassetid://10747384394"
+	return icon or ""
 end
 
 local ThemeHandlers = {
