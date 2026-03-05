@@ -19,7 +19,7 @@ Tab1:AddDiscordInvite({
     Invite = "Link discord invite",
 })
 
-local Section = Tab1:AddSection({"Section", "rbxassetid://10723415903"})
+local Section = Tab1:AddSection({"Section", "album"})
 
 local Paragraph = Tab1:AddParagraph({"Paragraph", "This is a Paragraph\nSecond Line"})
 
