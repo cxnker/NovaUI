@@ -84,7 +84,7 @@ end)
 Dropdown:Remove(Player.Name)
 Dropdown:Select(1)
 
-local Section2 = Tab2:AddSection({"Theme", "pencil"})
+local Section2 = Tab2:AddSection({"Theme", "rbxassetid://137986121120732"})
 
 Tab2:AddButton({"Set Custom Theme", function()
     Library:SetTheme("Custom")
