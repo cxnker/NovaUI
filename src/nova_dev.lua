@@ -1774,7 +1774,7 @@ function novalib:Notify(Configs)
         Position = UDim2.new(2, 0, 1, 0),
         AnchorPoint = Vector2.new(0, 1),
         AutomaticSize = "Y",
-        BackgroundTransparency = 0.25,
+        BackgroundTransparency = 1,
         GroupTransparency = 1
     })
     
@@ -1798,9 +1798,6 @@ function novalib:Notify(Configs)
         })
         Make("Corner", BackgroundImage, UDim.new(0, 16))
     end
-    
-    -- Stroke (borde)
-    Make("Stroke", MainFrame)
     
     -- Ícono (posicionado igual que en WindUI)
     local IconLabel = InsertTheme(Create("ImageLabel", MainFrame, {
