@@ -33,7 +33,7 @@ local novalib = {
 	Options = {},
 	Tabs = {},
 	Flags = {},
-	Icons = loadstring(game:HttpGet("https://pastefy.app/UaIbDJCd/raw))()
+	Icons = loadstring(game:HttpGet("https://pastefy.app/UaIbDJCd/raw"))()
 }
 
 local ViewportSize = workspace.CurrentCamera.ViewportSize
