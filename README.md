@@ -10,8 +10,10 @@
 > This interface is based on Redz Library V5
 
 > For a full version, use example.lua.
-> For a lite version with the essentials, use example_lt.lua
-> The dev version is experimental
+
+> For a lite version with the essentials, use example_lt.lua.
+
+> The dev version is experimental.
 
 ### Credits:
 - [Lucide-Icons](https://github.com/lucide-icons/lucide) (Icons)
