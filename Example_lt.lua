@@ -63,6 +63,12 @@ Tab1:AddTextBox({
     end
 })
 
+local Section2 = Tab2:AddSection({"Theme", "rbxassetid://137986121120732"})
+
+Tab2:AddButton({"Set Custom Theme", function()
+    Library:SetTheme("Custom")
+end})
+
 local Dropdown = Tab1:AddDropdown({
     Name = "Players List",
     Description = "Select the <font color='rgb(88, 101, 242)'>Number</font>",
@@ -83,9 +89,3 @@ end)
 
 Dropdown:Remove(Player.Name)
 Dropdown:Select(1)
-
-local Section2 = Tab2:AddSection({"Theme", "rbxassetid://137986121120732"})
-
-Tab2:AddButton({"Set Custom Theme", function()
-    Library:SetTheme("Custom")
-end})
