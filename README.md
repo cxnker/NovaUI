@@ -6,6 +6,9 @@
 
 <hr />
 
+> [!WARNING]
+> This interface is based on Redz Library V5
+
 ### Credits:
 - [Lucide-Icons](https://github.com/lucide-icons/lucide) (Icons)
 
