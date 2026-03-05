@@ -32,7 +32,7 @@ local novalib = {
 	Elements = {},
 	Options = {},
 	Tabs = {},
-	Icons = loadstring(game:HttpGet("https://pastefy.app/phzWzDsM/raw"))()
+	Icons = loadstring(game:HttpGet("https://pastefy.app/UaIbDJCd/raw"))()
 }
 
 local ViewportSize = workspace.CurrentCamera.ViewportSize
@@ -448,26 +448,11 @@ local function GetColor(Instance)
 	return ""
 end
 
-function novalib:GetIcon(index)
-	if type(index) ~= "string" or index:find("rbxassetid://") or #index == 0 then
-		return index
-	end
-	
-	local firstMatch = nil
-	index = string.lower(index):gsub("lucide", ""):gsub("-", "")
-	
-	if self.Icons[index] then
-		return self.Icons[index]
-	end
-	
-	for Name, Icon in pairs(self.Icons) do
-		if Name == index then
-			return Icon
-		elseif not firstMatch and Name:find(index, 1, true) then
-			firstMatch = Icon
-		end
-	end
-	return firstMatch or index
+function novalib:GetIcon(name)
+	if type(name) ~= "string" then return "" end
+	if name:find("rbxassetid://") then return name end
+	local icon = self.Icons[name:lower():gsub("-", "")]
+	return icon or ""
 end
 
 local ThemeHandlers = {
