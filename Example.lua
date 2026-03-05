@@ -39,6 +39,14 @@ end})
 
 Window:SelectTab(Tab2)
 local Section = Tab2:AddSection({"Section", "rbxassetid://10723415903"})
+
+Tab2:AddDiscordInvite({
+    Name = "Name Hub",
+    Description = "Join server",
+    Logo = "rbxassetid://18751483361",
+    Invite = "Link discord invite",
+})
+
 local Paragraph = Tab2:AddParagraph({"Paragraph", "This is a Paragraph\nSecond Line"})
 
 local Number = 0
@@ -129,11 +137,20 @@ Tab2:AddTextBox({
   end
 })
 
-Tab3:AddDiscordInvite({
-    Name = "Name Hub",
-    Description = "Join server",
-    Logo = "rbxassetid://18751483361",
-    Invite = "Link discord invite",
+Tab2:AddButton({"Notify Test", function()
+Library:Notify({
+    Title = "Notify Test",
+    Content = "Description",
+    Icon = "rbxassetid://10723415903",
+    Duration = 4
+})
+end})
+
+Library:Notify({
+    Title = "Success",
+    Content = "Description",
+    Icon = "rbxassetid://10723415903",
+    Duration = 3
 })
 
 --[[ Soon
