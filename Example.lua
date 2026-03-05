@@ -1,24 +1,5 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/cxnker/NovaUI/main/src/nova.lua"))()
 
-function gradient(text, startColor, endColor)
-    local result = ""
-    local length = #text
-
-    for i = 1, length do
-        local t = (i - 1) / math.max(length - 1, 1)
-        local r = math.floor((startColor.R + (endColor.R - startColor.R) * t) * 255)
-        local g = math.floor((startColor.G + (endColor.G - startColor.G) * t) * 255)
-        local b = math.floor((startColor.B + (endColor.B - startColor.B) * t) * 255)
-
-        local char = text:sub(i, i)
-        result = result .. "<font color=\"rgb(" .. r ..", " .. g .. ", " .. b .. ")\">" .. char .. "</font>"
-    end
-
-    return result
-end
-
-local Paragraph = Tab2:AddParagraph({"Paragraph " .. gradient("NovaUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")) .. " Lib"})
-
 local Window = Library:MakeWindow({
   Title = "Nova UI | Example",
   SubTitle = "by nova",
@@ -30,15 +11,15 @@ Window:AddMinimizeButton({
     Corner = { CornerRadius = UDim.new(1,1) },
 })
 
-local Tab1 = Window:MakeTab({"Tab1", "rbxassetid://10723415903"})
-local Tab2 = Window:MakeTab({"Tab2", "rbxassetid://10723415903"})
+local Tab1 = Window:MakeTab({"Tab1", "info"})
+local Tab2 = Window:MakeTab({"Tab2", "house"})
 
 Tab1:AddButton({"Custom Theme", function()
   Library:SetTheme("Custom")
 end})
 
 Window:SelectTab(Tab2)
-local Section = Tab2:AddSection({"Section", "rbxassetid://10723415903"})
+local Section = Tab2:AddSection({"Section", "info"})
 
 Tab2:AddDiscordInvite({
     Name = "Name Hub",
@@ -145,6 +126,25 @@ Library:Notify({
     Duration = 4
 })
 end})
+
+--[[function gradient(text, startColor, endColor)
+    local result = ""
+    local length = #text
+
+    for i = 1, length do
+        local t = (i - 1) / math.max(length - 1, 1)
+        local r = math.floor((startColor.R + (endColor.R - startColor.R) * t) * 255)
+        local g = math.floor((startColor.G + (endColor.G - startColor.G) * t) * 255)
+        local b = math.floor((startColor.B + (endColor.B - startColor.B) * t) * 255)
+
+        local char = text:sub(i, i)
+        result = result .. "<font color=\"rgb(" .. r ..", " .. g .. ", " .. b .. ")\">" .. char .. "</font>"
+    end
+
+    return result
+end
+
+local Paragraph = Tab2:AddParagraph({"Paragraph ", gradient("NovaUI", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF"))})]]
 
 --[[ Soon
 Tab3:Dropdown({
