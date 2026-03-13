@@ -1955,13 +1955,14 @@ function novalib:MakeWindow(Configs)
 
 -- NEW
 -- Reemplaza la función novalib:Notify con esta versión mejorada
+-- Reemplaza la función novalib:Notify con esta versión corregida
 function novalib:Notify(Configs)
     Configs = Configs or {}
     local Title = Configs.Title or "Notification"
     local Content = Configs.Content or ""
     local Icon = Configs.Icon and self:GetIcon(Configs.Icon) or "rbxassetid://10747384394"
     local Duration = Configs.Duration or 5
-    local IconThemed = Configs.IconThemed -- Para mantener compatibilidad
+    local IconThemed = Configs.IconThemed
     local CanClose = Configs.CanClose ~= false
     
     if not self.NotificationHolder then
@@ -1982,7 +1983,7 @@ function novalib:Notify(Configs)
         })
     end
 
-    -- Contenedor principal con animación de entrada
+    -- Contenedor principal
     local Notification = Create("Frame", self.NotificationHolder, {
         Size = UDim2.new(1, 0, 0, 0),
         BackgroundTransparency = 1,
@@ -1992,7 +1993,7 @@ function novalib:Notify(Configs)
         ClipsDescendants = true
     })
 
-    -- CanvasGroup para efectos de transparencia (como WindUI)
+    -- CanvasGroup para efectos
     local CanvasGroup = Create("CanvasGroup", Notification, {
         Size = UDim2.new(1, 0, 0, 0),
         AutomaticSize = "Y",
@@ -2001,7 +2002,7 @@ function novalib:Notify(Configs)
         Name = "Main"
     })
 
-    -- Frame principal con estilo squircle (redondeado perfecto)
+    -- Frame principal
     local MainFrame = InsertTheme(Create("Frame", CanvasGroup, {
         Size = UDim2.new(1, 0, 0, 0),
         AutomaticSize = "Y",
@@ -2010,12 +2011,12 @@ function novalib:Notify(Configs)
         Name = "Background"
     }), "Frame")
     
-    -- Bordes redondeados (squircle-style)
+    -- Bordes redondeados
     local UICorner = Create("UICorner", MainFrame, {
         CornerRadius = UDim.new(0, 12)
     })
     
-    -- Borde elegante
+    -- Borde
     local UIStroke = InsertTheme(Create("UIStroke", MainFrame, {
         Color = Theme["Color Stroke"],
         Thickness = 1.2,
@@ -2023,7 +2024,7 @@ function novalib:Notify(Configs)
         ApplyStrokeMode = "Border"
     }), "Stroke")
 
-    -- Barra de progreso (como WindUI, en la parte superior)
+    -- Barra de progreso (superior)
     local ProgressBar = InsertTheme(Create("Frame", MainFrame, {
         Size = UDim2.new(1, 0, 0, 3),
         Position = UDim2.new(0, 0, 0, 0),
@@ -2033,13 +2034,7 @@ function novalib:Notify(Configs)
         Name = "Progress"
     }), "Theme")
     
-    -- Layout principal
-    local MainLayout = Create("UIListLayout", MainFrame, {
-        FillDirection = "Horizontal",
-        Padding = UDim.new(0, 12),
-        VerticalAlignment = "Center"
-    })
-    
+    -- Padding general
     Create("UIPadding", MainFrame, {
         PaddingTop = UDim.new(0, 12),
         PaddingBottom = UDim.new(0, 12),
@@ -2047,28 +2042,44 @@ function novalib:Notify(Configs)
         PaddingRight = UDim.new(0, 12)
     })
 
-    -- Icono (si existe)
+    -- ============================================
+    -- ESTRUCTURA CORREGIDA
+    -- ============================================
+    
+    -- Frame horizontal para icono + contenido
+    local HorizontalContainer = Create("Frame", MainFrame, {
+        Size = UDim2.new(1, CanClose and -26 or 0, 0, 0),
+        AutomaticSize = "Y",
+        BackgroundTransparency = 1
+    }, {
+        Create("UIListLayout", {
+            FillDirection = "Horizontal",
+            Padding = UDim.new(0, 12),
+            VerticalAlignment = "Center"
+        })
+    })
+
+    -- Icono (izquierda)
     local IconLabel
     if Icon and Icon ~= "" then
-        IconLabel = InsertTheme(Create("ImageLabel", MainFrame, {
+        IconLabel = InsertTheme(Create("ImageLabel", HorizontalContainer, {
             Size = UDim2.new(0, 28, 0, 28),
             Image = Icon,
             BackgroundTransparency = 1,
-            ImageColor3 = Theme["Color Theme"],
-            LayoutOrder = 1
+            ImageColor3 = Theme["Color Theme"]
         }), "Theme")
     end
 
-    -- Contenedor de texto
-    local TextContainer = Create("Frame", MainFrame, {
+    -- Contenedor de texto (vertical, centrado)
+    local TextContainer = Create("Frame", HorizontalContainer, {
         Size = UDim2.new(1, Icon and -40 or 0, 0, 0),
         AutomaticSize = "Y",
-        BackgroundTransparency = 1,
-        LayoutOrder = 2
+        BackgroundTransparency = 1
     }, {
         Create("UIListLayout", {
             Padding = UDim.new(0, 4),
-            FillDirection = "Vertical"
+            FillDirection = "Vertical",
+            VerticalAlignment = "Center"
         })
     })
 
@@ -2087,7 +2098,7 @@ function novalib:Notify(Configs)
 
     -- Contenido (si existe)
     if Content and Content ~= "" then
-        local ContentLabel = InsertTheme(Create("TextLabel", TextContainer, {
+        InsertTheme(Create("TextLabel", TextContainer, {
             Size = UDim2.new(1, 0, 0, 0),
             AutomaticSize = "Y",
             Text = Content,
@@ -2101,16 +2112,18 @@ function novalib:Notify(Configs)
         }), "DarkText")
     end
 
-    -- Botón de cerrar (si CanClose)
+    -- Botón de cerrar (derecha, FUERA del HorizontalContainer)
     local CloseButton
     if CanClose then
         CloseButton = InsertTheme(Create("ImageButton", MainFrame, {
             Size = UDim2.new(0, 18, 0, 18),
+            Position = UDim2.new(1, -12, 0.5, 0),
+            AnchorPoint = Vector2.new(1, 0.5),
             Image = "rbxassetid://10747384394",
             BackgroundTransparency = 1,
             ImageColor3 = Theme["Color Text"],
-            LayoutOrder = 3,
-            AutoButtonColor = false
+            AutoButtonColor = false,
+            ZIndex = 3
         }), "Text")
         
         CloseButton.MouseEnter:Connect(function()
@@ -2121,18 +2134,12 @@ function novalib:Notify(Configs)
         end)
     end
 
-    -- Ajustar el padding según si hay icono
-    if not IconLabel then
-        MainLayout.Padding = UDim.new(0, 0)
-    end
-
     -- Función para cerrar
     local Closed = false
     local function Close()
         if Closed then return end
         Closed = true
         
-        -- Animación de salida (como WindUI)
         CreateTween({CanvasGroup, "GroupTransparency", 1, 0.25})
         CreateTween({Notification, "Size", UDim2.new(1, 0, 0, -8), 0.3})
         
@@ -2148,7 +2155,7 @@ function novalib:Notify(Configs)
     CreateTween({CanvasGroup, "GroupTransparency", 0, 0.3})
     CreateTween({Notification, "Position", UDim2.new(0, 0, 1, 0), 0.3})
     
-    -- Barra de progreso (si Duration > 0)
+    -- Barra de progreso
     if Duration > 0 then
         CreateTween({ProgressBar, "Size", UDim2.new(0, 0, 0, 3), Duration})
         
@@ -2158,7 +2165,7 @@ function novalib:Notify(Configs)
         end)
     end
 
-    -- API de retorno (estilo Nova pero con mejoras de WindUI)
+    -- API de retorno
     local NotifAPI = {
         Close = Close,
         Update = function(_, newTitle, newContent)
@@ -2170,7 +2177,6 @@ function novalib:Notify(Configs)
                 if contentLabel and contentLabel ~= TitleLabel then
                     contentLabel.Text = tostring(newContent)
                 elseif newContent ~= "" then
-                    -- Crear nuevo label de contenido si no existe
                     InsertTheme(Create("TextLabel", TextContainer, {
                         Size = UDim2.new(1, 0, 0, 0),
                         AutomaticSize = "Y",
@@ -2200,14 +2206,6 @@ function novalib:Notify(Configs)
     }
 
     return NotifAPI
-end
-
-function novalib:SetNotificationLower(Lower)
-    if self.NotificationHolder then
-        self.NotificationHolder.Size = Lower and 
-            UDim2.new(0, 320, 1, -56) or 
-            UDim2.new(0, 320, 1, -156)
-    end
 end
 			
 		return Tab
