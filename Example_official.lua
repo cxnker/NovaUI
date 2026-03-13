@@ -1,4 +1,4 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/cxnker/NovaUI/main/src/nova.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/cxnker/NovaUI/main/src/nova_official.lua"))()
 
 local Window = Library:MakeWindow({
   Title = "Nova UI | Example",
