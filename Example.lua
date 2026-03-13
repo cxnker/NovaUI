@@ -11,6 +11,10 @@ Window:AddMinimizeButton({
     Corner = { CornerRadius = UDim.new(1,1) },
 })
 
+local Tab1 = Window:MakeTab({"Tab1", "rbxassetid://124560466474914"})
+local Tab2 = Window:MakeTab({"Tab2", "rbxassetid://98755624629571"})
+
+Tab1:AddButton({"Custom Notify", function()
 Library:Notify({
     Title = "¡Notificación!",
     Content = "Este es un mensaje de prueba",
@@ -19,9 +23,7 @@ Library:Notify({
     IconThemed = true,
     CanClose = true
 })
-
-local Tab1 = Window:MakeTab({"Tab1", "rbxassetid://124560466474914"})
-local Tab2 = Window:MakeTab({"Tab2", "rbxassetid://98755624629571"})
+end})
 
 Tab1:AddButton({"Custom Theme", function()
   Library:SetTheme("Custom")
