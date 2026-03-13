@@ -1954,8 +1954,6 @@ function novalib:MakeWindow(Configs)
 		end
 
 -- NEW
--- Reemplaza la función novalib:Notify con esta versión mejorada
--- Reemplaza la función novalib:Notify con esta versión corregida
 function novalib:Notify(Configs)
     Configs = Configs or {}
     local Title = Configs.Title or "Notification"
@@ -2043,43 +2041,58 @@ function novalib:Notify(Configs)
     })
 
     -- ============================================
-    -- ESTRUCTURA CORREGIDA
+    -- ESTRUCTURA CORREGIDA (SIN UIListLayout)
     -- ============================================
     
-    -- Frame horizontal para icono + contenido
-    local HorizontalContainer = Create("Frame", MainFrame, {
-        Size = UDim2.new(1, CanClose and -26 or 0, 0, 0),
-        AutomaticSize = "Y",
-        BackgroundTransparency = 1
-    }, {
-        Create("UIListLayout", {
-            FillDirection = "Horizontal",
-            Padding = UDim.new(0, 12),
-            VerticalAlignment = "Center"
-        })
-    })
-
-    -- Icono (izquierda)
+    -- Icono (posicionado absolutamente a la izquierda)
     local IconLabel
     if Icon and Icon ~= "" then
-        IconLabel = InsertTheme(Create("ImageLabel", HorizontalContainer, {
+        IconLabel = InsertTheme(Create("ImageLabel", MainFrame, {
             Size = UDim2.new(0, 28, 0, 28),
+            Position = UDim2.new(0, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(0, 0.5),
             Image = Icon,
             BackgroundTransparency = 1,
-            ImageColor3 = Theme["Color Theme"]
+            ImageColor3 = Theme["Color Theme"],
+            ZIndex = 2
         }), "Theme")
     end
 
-    -- Contenedor de texto (vertical, centrado)
-    local TextContainer = Create("Frame", HorizontalContainer, {
-        Size = UDim2.new(1, Icon and -40 or 0, 0, 0),
-        AutomaticSize = "Y",
-        BackgroundTransparency = 1
+    -- Botón de cerrar (posicionado absolutamente a la derecha)
+    local CloseButton
+    if CanClose then
+        CloseButton = InsertTheme(Create("ImageButton", MainFrame, {
+            Size = UDim2.new(0, 18, 0, 18),
+            Position = UDim2.new(1, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(1, 0.5),
+            Image = "rbxassetid://10747384394",
+            BackgroundTransparency = 1,
+            ImageColor3 = Theme["Color Text"],
+            AutoButtonColor = false,
+            ZIndex = 2
+        }), "Text")
+        
+        CloseButton.MouseEnter:Connect(function()
+            CreateTween({CloseButton, "ImageColor3", Color3.fromRGB(255, 80, 80), 0.15})
+        end)
+        CloseButton.MouseLeave:Connect(function()
+            CreateTween({CloseButton, "ImageColor3", Theme["Color Text"], 0.15})
+        end)
+    end
+
+    -- Contenedor de texto (centrado, con márgenes para icono y X)
+    local TextContainer = Create("Frame", MainFrame, {
+        Size = UDim2.new(1, 
+            (Icon and -36 or 0) + (CanClose and -26 or 0), 
+            0, 0),
+        Position = UDim2.new(0, Icon and 36 or 12, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundTransparency = 1,
+        AutomaticSize = "Y"
     }, {
         Create("UIListLayout", {
             Padding = UDim.new(0, 4),
-            FillDirection = "Vertical",
-            VerticalAlignment = "Center"
+            FillDirection = "Vertical"
         })
     })
 
@@ -2110,28 +2123,6 @@ function novalib:Notify(Configs)
             TextWrapped = true,
             RichText = true
         }), "DarkText")
-    end
-
-    -- Botón de cerrar (derecha, FUERA del HorizontalContainer)
-    local CloseButton
-    if CanClose then
-        CloseButton = InsertTheme(Create("ImageButton", MainFrame, {
-            Size = UDim2.new(0, 18, 0, 18),
-            Position = UDim2.new(1, -12, 0.5, 0),
-            AnchorPoint = Vector2.new(1, 0.5),
-            Image = "rbxassetid://10747384394",
-            BackgroundTransparency = 1,
-            ImageColor3 = Theme["Color Text"],
-            AutoButtonColor = false,
-            ZIndex = 3
-        }), "Text")
-        
-        CloseButton.MouseEnter:Connect(function()
-            CreateTween({CloseButton, "ImageColor3", Color3.fromRGB(255, 80, 80), 0.15})
-        end)
-        CloseButton.MouseLeave:Connect(function()
-            CreateTween({CloseButton, "ImageColor3", Theme["Color Text"], 0.15})
-        end)
     end
 
     -- Función para cerrar
